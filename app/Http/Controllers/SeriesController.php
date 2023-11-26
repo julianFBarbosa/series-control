@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Serie;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class SeriesController extends Controller
 {
     public function index()
     {
-        $series = DB::select('SELECT name FROM series;');
+        $series = Serie::query()->orderBy('name')->get();
 
         return view('series.index')->with(compact('series'));
     }
@@ -22,14 +23,31 @@ class SeriesController extends Controller
 
     public function store(Request $request)
     {
-        $serieName = $request->input('name');
 
-        if(DB::insert('insert into series (name) values (?)', [$serieName])) {
-            return "OK";
-        } else {
-            return "deu erro";
+        try {
+            $request->validate([
+                'name' => 'unique:series,name|max:128'
+            ], [
+                'name.unique' => 'O nome dessa série já existe.',
+                'name.max' => 'O nome dessa série é muito grande.',
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
         }
 
-        return view('series.create');
+        Serie::create([
+            'name' => $request->input('name')
+        ]);
+
+        return redirect("/series");
+    }
+
+    public function destroy(Request $_request, string $id)
+    {
+        $serie = Serie::find($id);
+
+        if($serie) $serie->delete();
+
+        return response()->json($serie, 204);
     }
 }
