@@ -15,6 +15,6 @@ class SeriesController extends Controller
         ];
 
 
-        return view('series-list')->with(compact('series'));
+        return view('series.index')->with(compact('series'));
     }
 }
