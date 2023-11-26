@@ -1,7 +1,8 @@
 <x-layout title="Sériez">
     <a class="btn btn-dark mb-2" href="/series">Ver Lista</a>
 
-    <form action="" method="post">
+    <form action="/api/series/save" method="POST">
+        @csrf
         <div class="mb3">
             <label class="form-label" for="name">Nome</label>
             <input class="form-control" type="text" id="nome" name="name">
