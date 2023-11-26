@@ -15,7 +15,6 @@ class SeriesController extends Controller
         return view('series.index')->with(compact('series'));
     }
 
-
     public function create()
     {
         return view('series.create');
@@ -23,7 +22,6 @@ class SeriesController extends Controller
 
     public function store(Request $request)
     {
-
         try {
             $request->validate([
                 'name' => 'unique:series,name|max:128'
@@ -36,7 +34,7 @@ class SeriesController extends Controller
         }
 
         Serie::create([
-            'name' => $request->input('name')
+            'name' => trim($request->input('name'))
         ]);
 
         return redirect("/series");
